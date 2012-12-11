@@ -26,7 +26,7 @@ public class BasicBlock extends Block{
 		Util.renderCube(x, y, z);
 	}
 	
-	public boolean isOpaque(){
+	public boolean isSolid(){
 		return true;
 	}
 }

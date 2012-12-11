@@ -28,7 +28,7 @@ public class TestGame implements ApplicationListener{
 	public void create(){
 		Gdx.input.setInputProcessor(INPUT);
 		
-		PREFERENCES = Gdx.app.getPreferences("warPrefs");
+		PREFERENCES = Gdx.app.getPreferences("testPrefs");
 		
 		//TEXTURE = new Texture("images.png");
 		//TEXTURE.setFilter(TextureFilter.Nearest, TextureFilter.Linear);

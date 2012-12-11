@@ -7,9 +7,12 @@ public abstract class Block{
 		this.world = world;
 	}
 	
+	public void update(int x, int y, int z){
+	}
+	
 	public abstract void render(int x, int y, int z);
 	
-	public boolean isOpaque(){
+	public boolean isSolid(){
 		return false;
 	}
 }

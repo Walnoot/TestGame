@@ -2,7 +2,6 @@ package walnoot.testgame.world;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL10;
-import com.badlogic.gdx.math.MathUtils;
 
 public class World{
 	public static final int WIDTH = 16;//x-axis
@@ -15,18 +14,21 @@ public class World{
 	public World(){
 		for(int x = 0; x < WIDTH; x++){
 			for(int y = 0; y < LENGTH; y++){
-				setTile(new BasicBlock(this), x, y, 0);
-				if(MathUtils.randomBoolean()) setTile(new BasicBlock(this), x, y, 1);
+				setBlock(new BasicBlock(this), x, y, 0);
 			}
 		}
 		
-		tiles[3 + (2 * WIDTH) + (2 * WIDTH * LENGTH)] = new BasicBlock(this);
+		setBlock(new TransportBlock(this, 1), 1, 1, 1);
 		
-		movingCube = new MovingCube(0, 0, 3);
+		movingCube = new MovingCube(this, 0, 0, 3);
 	}
 	
 	public void update(){
 		movingCube.update();
+		
+		for(int i = 0; i < tiles.length; i++){
+			if(tiles[i] != null) tiles[i].update(i % WIDTH, (i / WIDTH) % LENGTH, i / (WIDTH * LENGTH));
+		}
 	}
 	
 	public void render(){
@@ -48,7 +50,19 @@ public class World{
 		Gdx.gl10.glDisable(GL10.GL_CULL_FACE);
 	}
 	
-	public void setTile(Block block, int x, int y, int z){
+	public boolean isSolid(int x, int y, int z){
+		Block block = getBlock(x, y, z);
+		if(block == null) return false;
+		return block.isSolid();
+	}
+	
+	public Block getBlock(int x, int y, int z){
+		if(x < 0 || y < 0 || z < 0 || x >= WIDTH || y >= LENGTH || z >= HEIGHT) return null;
+		
+		return tiles[x + (y * WIDTH) + (z * WIDTH * LENGTH)];
+	}
+	
+	public void setBlock(Block block, int x, int y, int z){
 		tiles[x + (y * WIDTH) + (z * WIDTH * LENGTH)] = block;
 	}
 	
