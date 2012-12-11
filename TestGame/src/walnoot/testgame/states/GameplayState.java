@@ -34,7 +34,7 @@ public class GameplayState extends State{
 		
 		camera = new PerspectiveCamera(90f, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		camera.near = 0.01f;
-		camera.position.z = 4f;
+		camera.position.z = 6f;
 		camera.rotate(Vector3.X, 45f);
 		
 		world = new World();
@@ -102,6 +102,8 @@ public class GameplayState extends State{
 			camera.rotate(Vector3.tmp.set(camera.direction).crs(camera.up),
 					-Gdx.input.getDeltaY() * MOUSE_SENSITIVITY / Gdx.graphics.getWidth());
 		}
+		
+		world.update();
 	}
 	
 	private void setLighting(){

@@ -6,21 +6,27 @@ import com.badlogic.gdx.math.MathUtils;
 
 public class World{
 	public static final int WIDTH = 16;//x-axis
-	public static final int LENGTH = 16;//y-axis
+	public static final int LENGTH = 8;//y-axis
 	public static final int HEIGHT = 4;//z-axis
 	
 	private Block[] tiles = new Block[WIDTH * LENGTH * HEIGHT];
 	private MovingCube movingCube;
 	
 	public World(){
-		for(int i = 0; i < LENGTH * WIDTH; i++){
-			int x = i % WIDTH, y = i / LENGTH;
-			setTile(new BasicBlock(this), x, y, 0);
-			
-			if(MathUtils.randomBoolean()) setTile(new BasicBlock(this), x, y, 1);
+		for(int x = 0; x < WIDTH; x++){
+			for(int y = 0; y < LENGTH; y++){
+				setTile(new BasicBlock(this), x, y, 0);
+				if(MathUtils.randomBoolean()) setTile(new BasicBlock(this), x, y, 1);
+			}
 		}
 		
+		tiles[3 + (2 * WIDTH) + (2 * WIDTH * LENGTH)] = new BasicBlock(this);
+		
 		movingCube = new MovingCube(0, 0, 3);
+	}
+	
+	public void update(){
+		movingCube.update();
 	}
 	
 	public void render(){
@@ -43,7 +49,7 @@ public class World{
 	}
 	
 	public void setTile(Block block, int x, int y, int z){
-		tiles[x + y * WIDTH + z * WIDTH * LENGTH] = block;
+		tiles[x + (y * WIDTH) + (z * WIDTH * LENGTH)] = block;
 	}
 	
 	public MovingCube getMovingCube(){

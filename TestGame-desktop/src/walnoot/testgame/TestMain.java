@@ -8,6 +8,7 @@ public class TestMain{
 		LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
 		cfg.title = "TestGame";
 		cfg.useGL20 = false;
+		cfg.vSyncEnabled = false;
 		cfg.width = 480;
 		cfg.height = 320;
 		
