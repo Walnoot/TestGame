@@ -2,6 +2,7 @@ package walnoot.testgame;
 
 import walnoot.testgame.states.GameplayState;
 import walnoot.testgame.states.State;
+import walnoot.testgame.world.World;
 
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
@@ -10,6 +11,7 @@ import com.badlogic.gdx.graphics.FPSLogger;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.esotericsoftware.kryo.Kryo;
 
 public class TestGame implements ApplicationListener{
 	public static final float UPDATES_PER_SECOND = 60, SECONDS_PER_UPDATE = 1 / UPDATES_PER_SECOND;
@@ -19,6 +21,7 @@ public class TestGame implements ApplicationListener{
 	public static Preferences PREFERENCES;
 	//public static SoundManager SOUND_MANAGER = new SoundManager();
 	public static final InputHandler INPUT = new InputHandler();
+	public static final Kryo KRYO = new Kryo();
 	
 	public static State state;
 	
@@ -35,6 +38,8 @@ public class TestGame implements ApplicationListener{
 		
 		fpsLogger = new FPSLogger();
 		
+		KRYO.register(World.class);
+		
 		state = new GameplayState();
 	}
 	
@@ -48,11 +53,13 @@ public class TestGame implements ApplicationListener{
 	}
 	
 	public void render(){
+		state.update();
+		
 		updateTimer += Gdx.graphics.getDeltaTime();
 		while(updateTimer > SECONDS_PER_UPDATE){
 			updateTimer -= SECONDS_PER_UPDATE;
 			
-			update();
+			fixedUpdate();
 		}
 		
 		Gdx.gl.glClearColor(1, 1, 1, 1);
@@ -61,10 +68,10 @@ public class TestGame implements ApplicationListener{
 		state.render();
 	}
 	
-	public void update(){
+	public void fixedUpdate(){
 		if(INPUT.escape.isPressed()) Gdx.app.exit();
 		
-		state.update();
+		state.fixedUpdate();
 		//if(SOUND_MANAGER.isLoaded()) SOUND_MANAGER.update();
 		INPUT.update();
 		

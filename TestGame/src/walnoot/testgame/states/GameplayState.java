@@ -8,15 +8,21 @@ import walnoot.testgame.world.World;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Buttons;
 import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.graphics.GL10;
 import com.badlogic.gdx.graphics.PerspectiveCamera;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.esotericsoftware.kryo.io.Input;
+import com.esotericsoftware.kryo.io.Output;
 
 
 
 public class GameplayState extends State{
+	public static final String SAVE_FOLDER = "testgame-saves";
+	public static final String SAVE_NAME = "world.dat";
+	
 	public static final float SENSITIVITY = 5f;
 	public static final float MOUSE_SENSITIVITY = 150f;
 	
@@ -51,7 +57,7 @@ public class GameplayState extends State{
 		world.render();
 	}
 	
-	public void update(){
+	public void fixedUpdate(){
 		angle += 0.3f;
 		
 		LIGHT_DIRECTION[0] = MathUtils.cosDeg(angle);
@@ -62,12 +68,14 @@ public class GameplayState extends State{
 		if(Gdx.input.isKeyPressed(Keys.CONTROL_LEFT)){
 			MovingCube cube = world.getMovingCube();
 			
-			if(input.forward.isJustPressed()) cube.translate(0, 1, 0);
-			if(input.backward.isJustPressed()) cube.translate(0, -1, 0);
-			if(input.left.isJustPressed()) cube.translate(-1, 0, 0);
-			if(input.right.isJustPressed()) cube.translate(1, 0, 0);
-			if(input.up.isJustPressed()) cube.translate(0, 0, 1);
-			if(input.down.isJustPressed()) cube.translate(0, 0, -1);
+			if(!cube.isMoving()){
+				if(input.forward.isPressed()) cube.translate(0, 1, 0);
+				if(input.backward.isPressed()) cube.translate(0, -1, 0);
+				if(input.left.isPressed()) cube.translate(-1, 0, 0);
+				if(input.right.isPressed()) cube.translate(1, 0, 0);
+				if(input.up.isPressed()) cube.translate(0, 0, 1);
+				if(input.down.isPressed()) cube.translate(0, 0, -1);
+			}
 		}else{
 			Vector2 translation = Vector2.tmp.set(0, 0);
 			
@@ -97,13 +105,35 @@ public class GameplayState extends State{
 		
 		Gdx.input.setCursorCatched(Gdx.input.isButtonPressed(Buttons.RIGHT));
 		
+		world.update();
+		
+		if(TestGame.INPUT.save.isJustPressed()){
+			FileHandle folder = Gdx.files.external(SAVE_FOLDER);
+			if(!folder.exists()) folder.mkdirs();
+			
+			FileHandle file = folder.child(SAVE_NAME);
+			
+			Output fileOutput = new Output(file.write(false));
+			TestGame.KRYO.writeObject(fileOutput, world);
+			fileOutput.close();
+		}else if(TestGame.INPUT.load.isJustPressed()){
+			FileHandle folder = Gdx.files.external(SAVE_FOLDER);
+			if(!folder.exists()) folder.mkdirs();
+			
+			FileHandle file = folder.child(SAVE_NAME);
+			
+			Input fileInput = new Input(file.read());
+			world = TestGame.KRYO.readObject(fileInput, World.class);
+			fileInput.close();
+		}
+	}
+	
+	public void update(){
 		if(Gdx.input.isButtonPressed(Buttons.RIGHT)){
 			camera.rotate(Vector3.Z, Gdx.input.getDeltaX() * MOUSE_SENSITIVITY / Gdx.graphics.getWidth());
 			camera.rotate(Vector3.tmp.set(camera.direction).crs(camera.up),
 					-Gdx.input.getDeltaY() * MOUSE_SENSITIVITY / Gdx.graphics.getWidth());
 		}
-		
-		world.update();
 	}
 	
 	private void setLighting(){

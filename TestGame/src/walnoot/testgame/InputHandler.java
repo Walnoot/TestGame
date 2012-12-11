@@ -16,6 +16,8 @@ public class InputHandler implements InputProcessor{
 	public Key up = new Key(Q);
 	public Key down = new Key(E);
 	public Key escape = new Key(ESCAPE);
+	public Key save = new Key(F5);
+	public Key load = new Key(F6);
 	
 	private ArrayList<Key> keys;
 	private OrthographicCamera camera;

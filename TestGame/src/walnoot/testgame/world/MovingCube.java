@@ -7,12 +7,16 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.math.Interpolation;
 
 public class MovingCube{
-	private static final Interpolation INTERPOLATION = Interpolation.swingOut;
+	private static final Interpolation INTERPOLATION = Interpolation.linear;
 	public static final float MOVE_TIME = 0.25f;
 	
-	private final World world;
+	private World world;
 	private int x, y, z, oldX, oldY, oldZ;
 	private float timer;
+	
+	public MovingCube(){
+		//empty constructor for kryo
+	}
 	
 	public MovingCube(World world, int x, int y, int z){
 		this.world = world;
@@ -31,6 +35,8 @@ public class MovingCube{
 		}else{
 			timer = MOVE_TIME;
 		}
+		
+		if(!world.isSolid(x, y, z - 1) && !isMoving()) translate(0, 0, -1);
 	}
 	
 	public void render(){
