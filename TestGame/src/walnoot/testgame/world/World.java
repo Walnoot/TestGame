@@ -4,17 +4,22 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL10;
 
 public class World{
-	public static final int WIDTH = 16;//x-axis
-	public static final int LENGTH = 8;//y-axis
-	public static final int HEIGHT = 4;//z-axis
-	
-	private Block[] tiles = new Block[WIDTH * LENGTH * HEIGHT];
+	private Block[] tiles;
+	private int width, length, height;
 	private MovingCube movingCube;
 	
-	public World(){
-		for(int x = 0; x < WIDTH; x++){
-			for(int y = 0; y < LENGTH; y++){
+	public World(int width, int length, int height){
+		this.width = width;
+		this.length = length;
+		this.height = height;
+		
+		tiles = new Block[width * length * height];
+		
+		for(int x = 0; x < width; x++){
+			for(int y = 0; y < length; y++){
 				setBlock(new BasicBlock(this), x, y, 0);
+				
+				if(x == 0 || y == 0 || x  == width - 1 || y == length - 1) setBlock(new BasicBlock(this), x, y, 1);
 			}
 		}
 		
@@ -23,11 +28,15 @@ public class World{
 		movingCube = new MovingCube(this, 0, 0, 3);
 	}
 	
+	public World(){
+		this(16, 16, 4);
+	}
+	
 	public void update(){
 		movingCube.update();
 		
 		for(int i = 0; i < tiles.length; i++){
-			if(tiles[i] != null) tiles[i].update(i % WIDTH, (i / WIDTH) % LENGTH, i / (WIDTH * LENGTH));
+			if(tiles[i] != null) tiles[i].update(i % width, (i / width) % length, i / (width * length));
 		}
 	}
 	
@@ -35,12 +44,10 @@ public class World{
 		Gdx.gl10.glEnable(GL10.GL_CULL_FACE);
 		Gdx.gl10.glCullFace(GL10.GL_FRONT);
 		
-		Gdx.gl10.glColor4f(0.5f, 0.5f, 0.5f, 1f);
-		
 		for(int i = 0; i < tiles.length; i++){
 			if(tiles[i] != null){
 				Gdx.gl10.glPushMatrix();
-				tiles[i].render(i % WIDTH, (i / WIDTH) % LENGTH, i / (WIDTH * LENGTH));
+				tiles[i].render(i % width, (i / width) % length, i / (width * length));
 				Gdx.gl10.glPopMatrix();
 			}
 		}
@@ -57,16 +64,26 @@ public class World{
 	}
 	
 	public Block getBlock(int x, int y, int z){
-		if(x < 0 || y < 0 || z < 0 || x >= WIDTH || y >= LENGTH || z >= HEIGHT) return null;
+		if(x < 0 || y < 0 || z < 0 || x >= width || y >= length || z >= height) return null;
 		
-		return tiles[x + (y * WIDTH) + (z * WIDTH * LENGTH)];
+		return tiles[x + (y * width) + (z * width * length)];
 	}
 	
 	public void setBlock(Block block, int x, int y, int z){
-		tiles[x + (y * WIDTH) + (z * WIDTH * LENGTH)] = block;
+		if(x < 0 || y < 0 || z < 0 || x >= width || y >= length || z >= height) return;
+		
+		tiles[x + (y * width) + (z * width * length)] = block;
 	}
 	
 	public MovingCube getMovingCube(){
 		return movingCube;
+	}
+	
+	public int getWidth(){
+		return width;
+	}
+	
+	public int getHeight(){
+		return height;
 	}
 }

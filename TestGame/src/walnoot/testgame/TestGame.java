@@ -7,17 +7,17 @@ import walnoot.testgame.world.World;
 import com.badlogic.gdx.ApplicationListener;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Preferences;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.FPSLogger;
 import com.badlogic.gdx.graphics.GL10;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.esotericsoftware.kryo.Kryo;
 
 public class TestGame implements ApplicationListener{
 	public static final float UPDATES_PER_SECOND = 60, SECONDS_PER_UPDATE = 1 / UPDATES_PER_SECOND;
-	public static final float FONT_SCALE = 1f / 64f;
+	public static final float FONT_SCALE = 1f / 92f;
 	public static BitmapFont FONT;
-	public static Texture TEXTURE;
+	//public static Texture TEXTURE;
 	public static Preferences PREFERENCES;
 	//public static SoundManager SOUND_MANAGER = new SoundManager();
 	public static final InputHandler INPUT = new InputHandler();
@@ -36,6 +36,11 @@ public class TestGame implements ApplicationListener{
 		//TEXTURE = new Texture("images.png");
 		//TEXTURE.setFilter(TextureFilter.Nearest, TextureFilter.Linear);
 		
+		FONT = new BitmapFont(Gdx.files.internal("blackout.fnt"), false);
+		FONT.setUseIntegerPositions(false);
+		FONT.setScale(FONT_SCALE / 6f);
+		FONT.setColor(Color.BLACK);
+		
 		fpsLogger = new FPSLogger();
 		
 		KRYO.register(World.class);
@@ -47,7 +52,7 @@ public class TestGame implements ApplicationListener{
 		//PREFERENCES.putBoolean(SoundManager.PREF_SOUND_KEY, SOUND_MANAGER.isPlaying());
 		PREFERENCES.flush();
 		
-		//FONT.dispose();
+		FONT.dispose();
 		//TEXTURE.dispose();
 		//SOUND_MANAGER.dispose();
 	}
